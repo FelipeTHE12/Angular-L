@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="agenda">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="./node_modules/angular/angular.js"></script>
+    <script src="./node_modules/angular-messages/angular-messages.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+</head>
+<body ng-controller="agendaController">
+    <div class="jumbotron">
+        <h3 ng-bind="app"></h3>
+        <input class="form-control" type="text" ng-model="criterioDeBusca" placeholder="Busque um contato.">
+        <table  ng-show="contacts.length > 0" class="table ">
+
+            <tr class="thead-dark">
+                <th></th>
+                <th><a href="" ng-click="ordenarPor('nome')">Nome</a> </th>
+                <th><a href="" ng-click="ordenarPor('telefone')">Telefone</a></th>
+                <th>Operadora</th>
+                <th>Data</th>
+            </tr>
+            <tr ng-class="{'marcado textbold': contact.selecionado}" ng-repeat="contact in contacts | filter: {nome: criterioDeBusca} | orderBy: 'criterioDeOrdenacao':direcaodaOrdenacao">
+                <td><input type="checkbox" ng-model="contact.selecionado"></td>
+                <td>{{contact.nome | uppercase}}</td>
+                <td>{{contact.telefone}}</td>
+                <td>{{contact.operadora.nome}}</td>
+                <td>{{contact.date | date: 'dd/MM/yyyy'}}</td>
+            </tr>
+        </table>
+        <hr>
+        <form name="contactForm">
+            <input class="form-control" type="text" ng-model="contact.nome" ng-minlength="8" ng-required="true" name="nome" placeholder="Nome">
+            <input class="form-control" type="text" ng-model="contact.telefone" ng-required="true" ng-pattern="/^\d{4,5}-\d{4}$/" name="telefone" placeholder="Telefone">
+
+            <select  class="selector form-control" ng-model="contact.operadora" ng-options="operadora.nome + ' - ' +'(' + (operadora.preco | currency) + ')' group by operadora.categoria for operadora in operadoras | orderBy: 'nome'">
+                <option value="">Selecione uma operadora !</option>
+            </select>
+        </form>
+
+
+        <div ng-show="contactForm.nome.$dirty" ng-messages=contactForm.nome.$error class="alert alert-danger">
+            <div ng-message="required">
+                Por favor, preencha corretamente o campo: Nome !
+            </div>
+            <div ng-message="minlength" >
+                O campo nome deve ter no mínimo 8 caracteres !
+            </div>
+        </div>
+
+        <div ng-show="contactForm.telefone.$dirty" ng-messages="contactForm.telefone.$error.$dirty" class="alert alert-danger">
+            <div ng-message="required">
+                Por favor, preencha corretamente o campo: Telefone !
+            </div>
+            <div ng-message="minlength" >
+                O campo telefone deve ter em seu formato 9999-9999
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" ng-click="addContact(contact)" ng-disabled="contactForm.$invalid">Adicionar Contato</button>
+        <button type="submit" class="btn btn-danger btn-block" ng-click="deleteContacts(contacts)" ng-if="isContactSelecionado(contacts)">Apagar Contato</button>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
