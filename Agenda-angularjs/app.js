@@ -1,27 +1,39 @@
 angular.module("agenda",["ngMessages"]);
 
-angular.module("agenda").controller("agendaController", function($scope){
+angular.module("agenda").controller("agendaController", function($scope, $http){
 
     $scope.app = "Lista Telefonica";
 
-    $scope.contacts = [
-        {nome: "Felipe", telefone: "123456789", date: new Date()},
-        {nome: "12", telefone: "132465789", date: new Date()},
-        {nome: "XII", telefone: "987654321", date: new Date()}
-    ];
+    $scope.contacts = [];
 
-    $scope.operadoras = [
-        {nome: "Tim", codigo: "99", categoria: "Celular", preco: 3},
-        {nome: "Vivo", codigo: "88", categoria: "Celular", preco: 2},
-        {nome: "Claro", codigo: "77", categoria: "Celular", preco: 4},
-        {nome: "GVT", codigo: "31", categoria: "Fixo", preco: 2},
-        {nome: "BH", codigo: "32", categoria: "Fixo", preco: 1}
-    ];
+    $scope.operadoras = [];
+    
+    var loadContact = function () {
+        $http.get("http://localhost:8080/contact").then(function (data, status) {
+            $scope.contacts = data.data;
+            console.log(data.data);
+        });
+    };
+
+    var loadOperadoras = function () {
+        $http.get("http://localhost:8080/operadora").then(function(data, status) {
+            console.log(data.data.nome);
+            $scope.operadoras = data.data
+        });
+    };
 
     $scope.addContact = function(contact) {
-        $scope.contacts.push(contact);
-        delete $scope.contact;
-        $scope.contactForm.$setPristine();
+        console.log(contact);
+        console.log(contact.operadora)
+        if (contact.date === undefined) {
+            contact.date = new Date();
+        }
+        $http.post("http://localhost:8080/contact", contact).then(function() {
+            delete $scope.contact;
+            $scope.contactForm.$setPristine();
+            loadContact();
+        });
+
     };
 
     $scope.deleteContacts = function(contacts) {
@@ -40,5 +52,9 @@ angular.module("agenda").controller("agendaController", function($scope){
         console.log(field);
         $scope.criterioDeOrdenacao = field;
         $scope.direcaodaOrdenacao = !$scope.direcaodaOrdenacao;
-    }
+    };
+
+    loadContact();
+    loadOperadoras();
+    
 });

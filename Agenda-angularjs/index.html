@@ -28,7 +28,7 @@
                 <td><input type="checkbox" ng-model="contact.selecionado"></td>
                 <td>{{contact.nome | uppercase}}</td>
                 <td>{{contact.telefone}}</td>
-                <td>{{contact.operadora.nome}}</td>
+                <td>{{contact.operadora.nome = operadoras[(contact.operadora.id -1 )].nome}}</td>
                 <td>{{contact.date | date: 'dd/MM/yyyy'}}</td>
             </tr>
         </table>
@@ -64,6 +64,8 @@
         <button type="submit" class="btn btn-primary btn-block" ng-click="addContact(contact)" ng-disabled="contactForm.$invalid">Adicionar Contato</button>
         <button type="submit" class="btn btn-danger btn-block" ng-click="deleteContacts(contacts)" ng-if="isContactSelecionado(contacts)">Apagar Contato</button>
     </div>
+
+    <div ng-include="'footer.html'"></div>
     <script src="app.js"></script>
 </body>
 </html>
