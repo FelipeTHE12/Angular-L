@@ -1,2 +1,0 @@
-angular.module("agenda",["ngMessages"]);
-

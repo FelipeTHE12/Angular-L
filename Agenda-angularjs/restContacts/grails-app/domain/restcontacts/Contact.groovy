@@ -5,6 +5,7 @@ import restcontacts.Operadora
 
 class Contact {
 
+    String serial
     String nome
     String telefone
     Date date
